@@ -2,18 +2,13 @@
 - hosts: localhost
   connection: local 
   tasks:
-    - name: set ansible_python_interpreter
-      set_fact: ansible_python_interpreter=/home/bols/venv/python34/bin/python VIRTUAL_ENV=/home/bols/venv/python34
-
-    - debug: msg="motd value is {{ lookup('env','VIRTUAL_ENV') }}"
-
-    - name: sshのキーをコピー
+    - name: sshのキーをクラウドに送信する
       local_action:
         module: cloudstack_sshkey
         name: bols@balalaika
         public_key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
 
-    - name: VMを作成する
+    - name: 仮想マシンを作成する
        local_action:
         module: cloudstack_vm
         name: web-vm-1
