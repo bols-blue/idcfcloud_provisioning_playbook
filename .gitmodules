@@ -1,0 +1,3 @@
+[submodule "ansible-cloudstack"]
+	path = ansible-cloudstack
+	url = git@github.com:bols-blue/ansible-cloudstack.git

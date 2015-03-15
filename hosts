@@ -1,0 +1,11 @@
+[blog-test]
+www.lnc.jp
+[blog-test:vars]
+ansible_ssh_user=bols
+
+[localhost]
+localhost
+
+[all:vars]
+ansible_ssh_user=suehiro
+

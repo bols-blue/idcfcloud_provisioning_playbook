@@ -1,0 +1,35 @@
+---
+- hosts: localhost
+  connection: local 
+  tasks:
+    - name: set ansible_python_interpreter
+      set_fact: ansible_python_interpreter=/home/bols/venv/python34/bin/python VIRTUAL_ENV=/home/bols/venv/python34
+
+    - debug: msg="motd value is {{ lookup('env','VIRTUAL_ENV') }}"
+
+    - name: sshのキーをコピー
+      local_action:
+        module: cloudstack_sshkey
+        name: bols@balalaika
+        public_key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
+
+    - local_action:
+        module: cloudstack_vm
+        name: web-vm-1
+        template: b2d2a4fa-d694-444b-b961-0a0f9d7fe0f3
+        service_offering: light.S1
+        ssh_key: bols@balalaika
+
+    - local_action:
+        module: cloudstack_fw
+        ip_address: 210.140.162.140
+        start_port: 80
+        end_port: 80
+        cidr: 0.0.0.0/0
+
+    - local_action:
+        module: cloudstack_fw
+        ip_address: 210.140.162.140
+        start_port: 22
+        end_port: 22
+        cidr: 0.0.0.0/0
