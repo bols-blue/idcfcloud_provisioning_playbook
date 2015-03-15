@@ -13,21 +13,24 @@
         name: bols@balalaika
         public_key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
 
-    - local_action:
+    - name: VMを作成する
+       local_action:
         module: cloudstack_vm
         name: web-vm-1
         template: b2d2a4fa-d694-444b-b961-0a0f9d7fe0f3
         service_offering: light.S1
         ssh_key: bols@balalaika
 
-    - local_action:
+    - name: httpを通過させるようファイヤーウォールの設定を修正
+      local_action:
         module: cloudstack_fw
         ip_address: 210.140.162.140
         start_port: 80
         end_port: 80
         cidr: 0.0.0.0/0
 
-    - local_action:
+    - name: sshを通過させるようファイヤーウォールの設定を修正
+      local_action:
         module: cloudstack_fw
         ip_address: 210.140.162.140
         start_port: 22
