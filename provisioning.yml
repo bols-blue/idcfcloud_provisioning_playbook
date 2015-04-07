@@ -9,9 +9,10 @@
         public_key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
 
     - name: 仮想マシンを作成する
-       local_action:
+      local_action:
         module: cloudstack_vm
         name: web-vm-1
+        hypervisor: VMware
         template: b2d2a4fa-d694-444b-b961-0a0f9d7fe0f3
         service_offering: light.S1
         ssh_key: bols@balalaika
@@ -31,3 +32,19 @@
         start_port: 22
         end_port: 22
         cidr: 0.0.0.0/0
+
+    - name: ポートフォワーディング80-> web-vm-1:80
+      local_action:
+        module: cloudstack_pf
+        ip_address: 210.140.162.140
+        vm: web-vm-1
+        public_port: 80
+        private_port: 80
+
+    - name: ポートフォワーディング22-> web-vm-1:22
+      local_action:
+        module: cloudstack_pf
+        ip_address: 210.140.162.140
+        vm: web-vm-1
+        public_port: 22
+        private_port: 22
