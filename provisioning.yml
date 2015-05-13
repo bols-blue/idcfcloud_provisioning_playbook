@@ -1,28 +1,29 @@
 ---
-- hosts: wordpress
+- hosts: localhost
   connection: local 
   vars:
-    vm_name: web-vm-1
+    vm_name: wordpless-vm-1
     firewall_ip: 210.140.162.140
+    key_name: bols@balalaika
   tasks:
     - name: sshのキーをクラウドに送信する
       local_action:
-        module: cloudstack_sshkey
-        name: bols@le-mac
+        module: cs_sshkeypair
+        name: "{{ key_name }}"
         public_key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
 
     - name: 仮想マシンを作成する
       local_action:
-        module: cloudstack_vm
+        module: cs_instance
         name: "{{ vm_name }}"
         hypervisor: VMware
         template: b2d2a4fa-d694-444b-b961-0a0f9d7fe0f3
         service_offering: light.S1
-        ssh_key: bols@le-mac
+        ssh_key: "{{ key_name }}"
 
     - name: httpを通過させるようファイヤーウォールの設定を修正
       local_action:
-        module: cloudstack_fw
+        module: cs_firewall
         ip_address: "{{ firewall_ip }}"
         start_port: 80
         end_port: 80
@@ -30,7 +31,7 @@
 
     - name: sshを通過させるようファイヤーウォールの設定を修正
       local_action:
-        module: cloudstack_fw
+        module: cs_firewall
         ip_address: "{{ firewall_ip }}"
         start_port: 22
         end_port: 22
@@ -38,7 +39,7 @@
 
     - name: ポートフォワーディング80-> web-vm-1:80
       local_action:
-        module: cloudstack_pf
+        module: cs_portforward
         ip_address: "{{ firewall_ip }}"
         vm: "{{ vm_name }}"
         public_port: 80
@@ -46,7 +47,7 @@
 
     - name: ポートフォワーディング22-> web-vm-1:22
       local_action:
-        module: cloudstack_pf
+        module: cs_portforward
         ip_address: "{{ firewall_ip }}"
         vm: "{{ vm_name }}"
         public_port: 22
