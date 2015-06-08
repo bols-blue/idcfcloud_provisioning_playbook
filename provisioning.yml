@@ -5,6 +5,7 @@
     vm_name: wordpless-vm-1
     firewall_ip: 210.140.162.140
     key_name: bols@balalaika
+    zone_name: pascal
   tasks:
     - name: sshのキーをクラウドに送信する
       local_action:
@@ -17,9 +18,10 @@
         module: cs_instance
         name: "{{ vm_name }}"
         hypervisor: VMware
-        template: b2d2a4fa-d694-444b-b961-0a0f9d7fe0f3
+        template: 23b08353-0320-43a9-a0f9-51140c318b58
         service_offering: light.S1
         ssh_key: "{{ key_name }}"
+        zone: "{{ zone_name }}"
 
     - name: httpを通過させるようファイヤーウォールの設定を修正
       local_action:
@@ -44,6 +46,7 @@
         vm: "{{ vm_name }}"
         public_port: 80
         private_port: 80
+        zone: "{{ zone_name }}"
 
     - name: ポートフォワーディング22-> web-vm-1:22
       local_action:
@@ -52,3 +55,4 @@
         vm: "{{ vm_name }}"
         public_port: 22
         private_port: 22
+        zone: "{{ zone_name }}"
